@@ -31,7 +31,9 @@ android {
                 if (!keystoreFile.exists()) {
                     keystoreFile.parentFile.mkdirs()
                     keystoreFile.outputStream().use { os ->
-                        os.write(java.util.Base64.getDecoder().decode(System.getenv("ANDROID_KEYSTORE_B64")))
+                        // Usamos el decodificador nativo asegurando que no falte la librería
+                        val decoder = java.util.Base64.getDecoder()
+                        os.write(decoder.decode(System.getenv("ANDROID_KEYSTORE_B64")))
                     }
                 }
                 storeFile = keystoreFile
