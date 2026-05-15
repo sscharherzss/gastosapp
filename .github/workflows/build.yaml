@@ -32,7 +32,7 @@ jobs:
       - name: Build APK for Android
         # Usamos build para generar el archivo final, no para depurar
         run: npm run tauri android build
-        - name: Build APK for Android
+      - name: Build APK for Android
         run: npm run tauri android build
         env:
           ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
