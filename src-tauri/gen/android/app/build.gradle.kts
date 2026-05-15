@@ -24,25 +24,40 @@ android {
         versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
         versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
     }
+    signingConfigs {
+        create("release") {
+            if (System.getenv("ANDROID_KEYSTORE_B64") != null) {
+                val keystoreFile = file("${layout.buildDirectory.get().asFile}/my-release-key.keystore")
+                if (!keystoreFile.exists()) {
+                    keystoreFile.parentFile.mkdirs()
+                    keystoreFile.outputStream().use { os ->
+                        os.write(java.util.Base64.getDecoder().decode(System.getenv("ANDROID_KEYSTORE_B64")))
+                    }
+                }
+                storeFile = keystoreFile
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         getByName("debug") {
             manifestPlaceholders["usesCleartextTraffic"] = "true"
             isDebuggable = true
             isJniDebuggable = true
             isMinifyEnabled = false
-            packaging {                jniLibs.keepDebugSymbols.add("*/arm64-v8a/*.so")
-                jniLibs.keepDebugSymbols.add("*/armeabi-v7a/*.so")
-                jniLibs.keepDebugSymbols.add("*/x86/*.so")
-                jniLibs.keepDebugSymbols.add("*/x86_64/*.so")
+            packaging {
+                jniLibs.keepDebugSymbols.add("**/arm64-v8a/*.so")
+                jniLibs.keepDebugSymbols.add("**/armeabi-v7a/*.so")
+                jniLibs.keepDebugSymbols.add("**/x86/*.so")
+                jniLibs.keepDebugSymbols.add("**/x86_64/*.so")
             }
         }
         getByName("release") {
-            isMinifyEnabled = true
-            proguardFiles(
-                *fileTree(".") { include("**/*.pro") }
-                    .plus(getDefaultProguardFile("proguard-android-optimize.txt"))
-                    .toList().toTypedArray()
-            )
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     kotlinOptions {
