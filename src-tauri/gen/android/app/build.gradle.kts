@@ -26,17 +26,10 @@ android {
     }
     signingConfigs {
         create("release") {
-            if (System.getenv("ANDROID_KEYSTORE_B64") != null) {
-                val keystoreFile = file("${layout.buildDirectory.get().asFile}/my-release-key.keystore")
-                if (!keystoreFile.exists()) {
-                    keystoreFile.parentFile.mkdirs()
-                    keystoreFile.outputStream().use { os ->
-                        // Usamos el decodificador nativo asegurando que no falte la librería
-                        val decoder = java.util.Base64.getDecoder()
-                        os.write(decoder.decode(System.getenv("ANDROID_KEYSTORE_B64")))
-                    }
-                }
-                storeFile = keystoreFile
+            // Si el archivo keystore físico existe en el entorno, lo cargamos directamente
+            val keystoreFilePath = System.getenv("ANDROID_KEYSTORE_PATH")
+            if (!keystoreFilePath.isNullOrEmpty()) {
+                storeFile = file(keystoreFilePath)
                 storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
                 keyAlias = System.getenv("ANDROID_KEY_ALIAS")
                 keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
