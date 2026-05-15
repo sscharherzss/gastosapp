@@ -38,4 +38,5 @@ jobs:
         with:
           name: app-gastos-release
           # Esta es la ruta donde Tauri deja los APKs generados
-          path: src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+          #path: src-tauri/gen/android/app/build/outputs/apk/universal/release/*.ap
+          path: src-tauri/gen/android/app/build/outputs/apk/**/*.apk
