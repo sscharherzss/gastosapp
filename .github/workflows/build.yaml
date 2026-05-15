@@ -1,0 +1,41 @@
+name: Build Android APK
+on:
+  push:
+    branches: [ main ] # Se activa al subir cambios a la rama principal
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java 17 (Microsoft)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android, armv7-linux-androideabi
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build APK for Android
+        # Usamos build para generar el archivo final, no para depurar
+        run: npm run tauri android build
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-gastos-release
+          # Esta es la ruta donde Tauri deja los APKs generados
+          path: src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
