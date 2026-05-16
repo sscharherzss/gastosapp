@@ -25,17 +25,22 @@ jobs:
         with:
           targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
 
-      - name: Install NDK
-        run: |
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;29.0.14206865"
-          echo "NDK_HOME=$ANDROID_HOME/ndk/29.0.14206865" >> $GITHUB_ENV
-
       - name: Install Dependencies
         run: npm install
 
       - name: Decode Keystore
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > $HOME/my-release-key.keystore
+
+      - name: Fix tauri.settings.gradle
+        run: |
+          TAURI_ANDROID=$(find $HOME/.cargo/registry/src -path "*/tauri-*/mobile/android" -type d 2>/dev/null | head -1)
+          echo "Found tauri-android at: $TAURI_ANDROID"
+          cat > src-tauri/gen/android/tauri.settings.gradle << GRADLE
+          include ':tauri-android'
+          project(':tauri-android').projectDir = new File("$TAURI_ANDROID")
+          GRADLE
+          cat src-tauri/gen/android/tauri.settings.gradle
 
       - name: Build APK
         run: npm run tauri android build
