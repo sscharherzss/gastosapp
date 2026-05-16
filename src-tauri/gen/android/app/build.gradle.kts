@@ -11,8 +11,8 @@ android {
         applicationId = "com.misfinanzas.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = tauri.properties.getProperty("tauri.android.versionCode", "1").toInt()
-        versionName = tauri.properties.getProperty("tauri.android.versionName", "1.0")
+        versionCode = 1
+        versionName = "1.0"
     }
     signingConfigs {
         create("release") {
