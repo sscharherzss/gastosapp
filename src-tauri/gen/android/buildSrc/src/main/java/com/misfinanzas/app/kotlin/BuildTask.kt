@@ -63,6 +63,7 @@ open class BuildTask : DefaultTask() {
                 args("--release")
             }
             args(listOf("--target", target))
-        }.assertNormalExitValue()
+	    environment("TAURI_DEV_HOST", "192.168.0.26")       
+	    }.assertNormalExitValue()
     }
 }

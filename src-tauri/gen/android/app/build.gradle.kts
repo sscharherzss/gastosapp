@@ -1,38 +1,27 @@
-import java.util.Properties
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("rust")
-}
-
-val tauriProperties = Properties().apply {
-    val propFile = file("tauri.properties")
-    if (propFile.exists()) {
-        propFile.inputStream().use { load(it) }
-    }
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 34
     namespace = "com.misfinanzas.app"
     defaultConfig {
-        manifestPlaceholders["usesCleartextTraffic"] = "false"
         applicationId = "com.misfinanzas.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
-        versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
+        versionCode = tauri.properties.getProperty("tauri.android.versionCode", "1").toInt()
+        versionName = tauri.properties.getProperty("tauri.android.versionName", "1.0")
     }
     signingConfigs {
         create("release") {
-            // Si el archivo keystore físico existe en el entorno, lo cargamos directamente
-            val keystoreFilePath = System.getenv("ANDROID_KEYSTORE_PATH")
-            if (!keystoreFilePath.isNullOrEmpty()) {
-                storeFile = file(keystoreFilePath)
-                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
-                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+            val keystorePath = System.getenv("ANDROID_KEYSTORE_PATH") ?: "/home/charherz/gastos-key.jks"
+            val keystoreFile = file(keystorePath)
+            if (keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD") ?: "android"
+                keyAlias = System.getenv("ANDROID_KEY_ALIAS") ?: "gastos"
+                keyPassword = System.getenv("ANDROID_KEY_PASSWORD") ?: "android"
             }
         }
     }
@@ -53,6 +42,9 @@ android {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            packaging {
+                jniLibs.useLegacyPackaging = true
+            }
         }
     }
     kotlinOptions {
@@ -64,18 +56,5 @@ android {
 }
 
 rust {
-    rootDirRel = "../../../"
+    rootDirRel = "../../.."
 }
-
-dependencies {
-    implementation("androidx.webkit:webkit:1.14.0")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.activity:activity-ktx:1.10.1")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-process:2.10.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
-}
-
-apply(from = "tauri.build.gradle.kts")
