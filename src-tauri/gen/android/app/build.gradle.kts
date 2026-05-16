@@ -61,6 +61,7 @@ rust {
 }
 
 dependencies {
+    implementation(project(":tauri-android"))
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.webkit:webkit:1.8.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
