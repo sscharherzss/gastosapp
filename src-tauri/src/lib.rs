@@ -4,6 +4,12 @@ mod commands;
 use sqlx::sqlite::SqlitePoolOptions;
 use commands::gastos::inicializar_db;
 use tauri::Manager;
+use tokio::sync::RwLock;
+
+// pub struct es vital aquí para que `commands::gastos` pueda ver el tipo sin restricciones
+pub struct DbState {
+    pub pool: RwLock<Option<sqlx::SqlitePool>>,
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -12,6 +18,7 @@ pub fn run() {
             let app_dir = app.path().app_data_dir()
                 .expect("no se pudo obtener el directorio de datos");
             std::fs::create_dir_all(&app_dir).ok();
+            
             let db_url = format!("sqlite://{}?mode=rwc",
                 app_dir.join("gastos.db").display());
 
@@ -21,13 +28,19 @@ pub fn run() {
                     .connect(&db_url)
                     .await
                     .expect("error conectando a SQLite");
+                
                 inicializar_db(&pool).await
                     .expect("error creando tablas");
-                app.manage(pool);
+                
+                // Inicializamos con gastos.db por defecto
+                app.manage(DbState {
+                    pool: RwLock::new(Some(pool)),
+                });
             });
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            commands::gastos::cambiar_perfil, // Expuesto hacia el frontend de React
             commands::gastos::agregar_gasto,
             commands::gastos::listar_gastos,
             commands::gastos::eliminar_gasto,

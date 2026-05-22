@@ -12,7 +12,8 @@
   --green:   #10b981;
   --red:     #f43f5e;
   --amber:   #f59e0b;
-  --sidebar: 220px;
+  /* Sidebar siempre colapsada en 64px; se expande con JS via inline style */
+  --sidebar: 64px;
   --radius:  12px;
 }
 
@@ -31,63 +32,18 @@ body {
   min-height: 100vh;
 }
 
-/* ── Sidebar ───────────────────────────────────────────────────────────────── */
-.sidebar {
-  width: var(--sidebar);
-  background: var(--bg2);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  padding: 1.5rem 1rem;
-  position: fixed;
-  top: 0; left: 0; bottom: 0;
-}
-
-.sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  padding: .5rem .4rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -.02em;
-}
-
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: .3rem;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: .7rem;
-  padding: .65rem .9rem;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  font-size: .93rem;
-  font-weight: 500;
-  transition: background .15s, color .15s;
-  width: 100%;
-  text-align: left;
-}
-.nav-item:hover  { background: var(--bg3); color: var(--text); }
-.nav-item.active { background: #6366f120; color: var(--indigo); }
-
 /* ── Main ──────────────────────────────────────────────────────────────────── */
+/* El sidebar es fixed de 64px; el main siempre empieza a los 64px */
 .main {
-  margin-left: var(--sidebar);
+  margin-left: var(--sidebar); /* = 64px */
   flex: 1;
-  padding: 1.8rem 2rem;
+  padding: 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  /* Importante: limita el ancho al espacio real disponible */
+  min-width: 0;
+  max-width: calc(100vw - var(--sidebar));
 }
 
 /* ── Header mes ────────────────────────────────────────────────────────────── */
@@ -97,10 +53,10 @@ body {
   gap: 1rem;
 }
 .mes-label {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -.03em;
-  min-width: 180px;
+  min-width: 160px;
   text-align: center;
 }
 .btn-mes {
@@ -119,7 +75,7 @@ body {
 .stats-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: .875rem;
 }
 
 .stat-card {
@@ -127,9 +83,9 @@ body {
   border: 1px solid var(--border);
   border-left: 3px solid var(--accent, var(--indigo));
   border-radius: var(--radius);
-  padding: 1.1rem 1.3rem;
+  padding: 1rem 1.1rem;
   display: flex;
-  gap: 1rem;
+  gap: .875rem;
   align-items: center;
   transition: transform .15s;
 }
@@ -140,31 +96,10 @@ body {
   opacity: .9;
   flex-shrink: 0;
 }
-.stat-body { display: flex; flex-direction: column; gap: .15rem; }
-.stat-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-.stat-value { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; }
-.stat-sub   { font-size: .75rem; color: var(--amber); }
-
-/* ── Gráficos ──────────────────────────────────────────────────────────────── */
-.graficos-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-.chart-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.2rem 1.3rem;
-}
-.chart-title {
-  font-size: .85rem;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  margin-bottom: 1rem;
-}
+.stat-body  { display: flex; flex-direction: column; gap: .15rem; }
+.stat-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.stat-value { font-size: 1.15rem; font-weight: 700; letter-spacing: -.02em; }
+.stat-sub   { font-size: .73rem; color: var(--amber); }
 
 /* ── Formularios ───────────────────────────────────────────────────────────── */
 .tab-content { display: flex; flex-direction: column; gap: 1.2rem; }
@@ -173,13 +108,13 @@ body {
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.3rem 1.4rem;
+  padding: 1.2rem 1.3rem;
 }
 .form-title {
-  font-size: .9rem;
+  font-size: .88rem;
   font-weight: 600;
   color: var(--muted);
-  margin-bottom: 1rem;
+  margin-bottom: .875rem;
   display: flex;
   align-items: center;
   gap: .5rem;
@@ -189,7 +124,7 @@ body {
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr auto;
-  gap: .7rem;
+  gap: .65rem;
   align-items: center;
 }
 
@@ -238,7 +173,7 @@ body {
 
 /* ── Lista ─────────────────────────────────────────────────────────────────── */
 .section-title {
-  font-size: .85rem;
+  font-size: .83rem;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
@@ -249,44 +184,69 @@ body {
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: .75rem 1rem;
+  padding: .7rem .9rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   transition: background .12s;
 }
 .lista-item:hover { background: var(--bg3); }
-.lista-item-info  { display: flex; align-items: center; gap: .8rem; flex: 1; min-width: 0; }
+.lista-item-info  { display: flex; align-items: center; gap: .7rem; flex: 1; min-width: 0; }
 .lista-item-cat {
-  font-size: .72rem;
+  font-size: .7rem;
   font-weight: 600;
-  padding: .2rem .55rem;
+  padding: .2rem .5rem;
   border-radius: 20px;
   background: #6366f120;
   color: var(--indigo);
   white-space: nowrap;
   flex-shrink: 0;
 }
-.lista-item-desc  { font-size: .9rem; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lista-item-fecha { font-size: .78rem; color: var(--muted); flex-shrink: 0; }
+.lista-item-desc  { font-size: .88rem; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lista-item-fecha { font-size: .76rem; color: var(--muted); flex-shrink: 0; }
 .lista-item-right { display: flex; align-items: center; gap: .6rem; }
-.lista-item-monto { font-size: .95rem; font-weight: 700; color: var(--red); }
+.lista-item-monto { font-size: .93rem; font-weight: 700; color: var(--red); }
 
 .empty { color: var(--muted); font-size: .9rem; padding: 1.5rem 0; text-align: center; }
 
-/* ── Responsive ────────────────────────────────────────────────────────────── */
-@media (max-width: 900px) {
-  :root { --sidebar: 64px; }
-  .sidebar-logo span, .nav-item span { display: none; }
-  .sidebar-logo { justify-content: center; }
-  .nav-item { justify-content: center; padding: .7rem; }
-  .stats-row { grid-template-columns: 1fr; }
-  .graficos-grid { grid-template-columns: 1fr; }
-  .form-grid { grid-template-columns: 1fr 1fr; }
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* RESPONSIVE — teléfono vertical                                              */
+/* Breakpoint clave: <= 520px es el ancho ÚTIL (ya descontados los 64px del   */
+/* sidebar), que corresponde a teléfonos con pantalla de hasta ~584px de ancho */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+/* Tabletas angostas / landscape phones */
+@media (max-width: 860px) {
+  .stats-row    { grid-template-columns: 1fr 1fr; }
+  .form-grid    { grid-template-columns: 1fr 1fr; }
 }
 
+/* Teléfonos verticales —— aquí es donde estaban los gráficos aplastados */
 @media (max-width: 600px) {
-  .main { padding: 1rem; }
-  .form-grid { grid-template-columns: 1fr; }
-  .lista-item-fecha { display: none; }
+  .main {
+    padding: .875rem;
+    gap: .875rem;
+  }
+
+  /* Stats en columna única para que quepan los montos largos (COP) */
+  .stats-row {
+    grid-template-columns: 1fr;
+    gap: .6rem;
+  }
+  .stat-card  { padding: .8rem 1rem; }
+  .stat-value { font-size: 1.05rem; }
+
+  /* Formularios */
+  .form-grid          { grid-template-columns: 1fr; }
+  .form-card          { padding: 1rem; }
+  .lista-item-fecha   { display: none; }
+
+  /* Mes header más compacto */
+  .mes-label  { font-size: 1.1rem; min-width: 130px; }
+}
+
+/* Teléfonos muy pequeños */
+@media (max-width: 380px) {
+  :root { font-size: 13px; }
+  .main { padding: .625rem; }
 }
