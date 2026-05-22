@@ -321,72 +321,71 @@ function Sidebar({ tab, setTab, tabs, perfilActivo, onAbrirPerfiles }) {
         {tabs.map(t => {
           const activo = tab === t.id;
           return (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{
-              display:"flex",alignItems:"center",gap:12,
-              padding:"0 0 0 16px",height:44,
-              border:"none",background:"transparent",cursor:"pointer",
-              position:"relative",
-              color: activo ? accentColor : "#94a3b8",
-              transition:"color 0.15s",
-              textAlign:"left",width:"100%",
-            }}>
-              {/* Línea activa lateral */}
-              <div style={{
-                position:"absolute",left:0,top:"50%",transform:"translateY(-50%)",
-                width:3,height: activo ? 24 : 0,
-                background:accentColor,borderRadius:"0 3px 3px 0",
-                transition:"height 0.2s cubic-bezier(0.4,0,0.2,1)"
-              }}/>
-              {/* Ícono con fondo al estar activo */}
-              <div style={{
-                width:32,height:32,borderRadius:8,flexShrink:0,
-                display:"flex",alignItems:"center",justifyContent:"center",
-                background: activo ? accentColor + "20" : "transparent",
-                transition:"background 0.15s"
+            <>
+              <button onClick={() => setTab(t.id)} style={{
+                display:"flex",alignItems:"center",gap:12,
+                padding:"0 0 0 16px",height:44,
+                border:"none",background:"transparent",cursor:"pointer",
+                position:"relative",
+                color: activo ? accentColor : "#94a3b8",
+                transition:"color 0.15s",
+                textAlign:"left",width:"100%",
               }}>
-                <t.icon size={18}/>
-              </div>
-              {/* Label */}
-              <span style={{
-                fontSize:13,fontWeight: activo ? 700 : 500,
-                opacity: expandido ? 1 : 0,
-                transform: expandido ? "translateX(0)" : "translateX(-8px)",
-                transition:"opacity 0.18s, transform 0.18s",
-                whiteSpace:"nowrap"
-              }}>{t.label}</span>
-            </button>
+                {/* Línea activa lateral */}
+                <div style={{
+                  position:"absolute",left:0,top:"50%",transform:"translateY(-50%)",
+                  width:3,height: activo ? 24 : 0,
+                  background:accentColor,borderRadius:"0 3px 3px 0",
+                  transition:"height 0.2s cubic-bezier(0.4,0,0.2,1)"
+                }}/>
+                {/* Ícono con fondo al estar activo */}
+                <div style={{
+                  width:32,height:32,borderRadius:8,flexShrink:0,
+                  display:"flex",alignItems:"center",justifyContent:"center",
+                  background: activo ? accentColor + "20" : "transparent",
+                  transition:"background 0.15s"
+                }}>
+                  <t.icon size={18}/>
+                </div>
+                {/* Label */}
+                <span style={{
+                  fontSize:13,fontWeight: activo ? 700 : 500,
+                  opacity: expandido ? 1 : 0,
+                  transform: expandido ? "translateX(0)" : "translateX(-8px)",
+                  transition:"opacity 0.18s, transform 0.18s",
+                  whiteSpace:"nowrap"
+                }}>{t.label}</span>
+              </button>
+              {t.id === "compromisos" && (
+                <button onClick={onAbrirPerfiles} style={{
+                  display:"flex",alignItems:"center",gap:12,
+                  padding:"0 0 0 16px",height:44,
+                  border:"none",background:"transparent",cursor:"pointer",
+                  color:"#64748b",width:"100%",
+                  transition:"color 0.15s",
+                }}
+                  onMouseEnter={e=>e.currentTarget.style.color="#e2e8f0"}
+                  onMouseLeave={e=>e.currentTarget.style.color="#64748b"}
+                >
+                  <div style={{
+                    width:32,height:32,borderRadius:8,flexShrink:0,
+                    display:"flex",alignItems:"center",justifyContent:"center"
+                  }}>
+                    <Users size={18}/>
+                  </div>
+                  <span style={{
+                    fontSize:13,fontWeight:500,
+                    opacity: expandido ? 1 : 0,
+                    transform: expandido ? "translateX(0)" : "translateX(-8px)",
+                    transition:"opacity 0.18s, transform 0.18s",
+                    whiteSpace:"nowrap"
+                  }}>Cambiar perfil</span>
+                </button>
+              )}
+            </>
           );
         })}
       </nav>
-
-      {/* Botón de perfiles */}
-      <div style={{
-        borderTop:"1px solid #334155",padding:"0.75rem 0",paddingLeft:16,flexShrink:0
-      }}>
-        <button onClick={onAbrirPerfiles} style={{
-          display:"flex",alignItems:"center",gap:12,height:44,
-          border:"none",background:"transparent",cursor:"pointer",
-          color:"#64748b",width:"100%",
-          transition:"color 0.15s",padding:0,
-        }}
-          onMouseEnter={e=>e.currentTarget.style.color="#e2e8f0"}
-          onMouseLeave={e=>e.currentTarget.style.color="#64748b"}
-        >
-          <div style={{
-            width:32,height:32,borderRadius:8,flexShrink:0,
-            display:"flex",alignItems:"center",justifyContent:"center"
-          }}>
-            <Users size={18}/>
-          </div>
-          <span style={{
-            fontSize:13,fontWeight:500,
-            opacity: expandido ? 1 : 0,
-            transform: expandido ? "translateX(0)" : "translateX(-8px)",
-            transition:"opacity 0.18s, transform 0.18s",
-            whiteSpace:"nowrap"
-          }}>Cambiar perfil</span>
-        </button>
-      </div>
     </aside>
   );
 }
@@ -532,7 +531,7 @@ function useAncho() {
   return ancho;
 }
 
-function Graficos({ resumen, gastos, ingresos, dispensador, prediccion, compromisos, onAbrirCompromisos }) {
+function Graficos({ resumen, gastos, ingresos, dispensador, prediccion, compromisos, onAbrirCompromisos, onAbrirPerfiles }) {
   const fmtLocal = n => new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",minimumFractionDigits:0}).format(n||0);
   const ancho = useAncho();
   // El sidebar colapsado mide 64px; en móvil vertical la pantalla útil es ~360-420px
@@ -704,9 +703,14 @@ function Graficos({ resumen, gastos, ingresos, dispensador, prediccion, compromi
       <div style={card}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
           <div style={titulo}>📋 Compromisos vs Disponible</div>
-          <button onClick={onAbrirCompromisos} style={{padding:"0.45rem 0.8rem",borderRadius:10,border:"1px solid #334155",background:"#0f172a",color:"#94a3b8",fontSize:12,cursor:"pointer"}}>
-            + Agregar compromiso
-          </button>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:8}}>
+            <button onClick={onAbrirCompromisos} style={{padding:"0.45rem 0.8rem",borderRadius:10,border:"1px solid #334155",background:"#0f172a",color:"#94a3b8",fontSize:12,cursor:"pointer"}}>
+              + Agregar compromiso
+            </button>
+            <button onClick={onAbrirPerfiles} style={{padding:"0.45rem 0.8rem",borderRadius:10,border:"1px solid #334155",background:"#0f172a",color:"#94a3b8",fontSize:12,cursor:"pointer"}}>
+              Cambiar perfil
+            </button>
+          </div>
         </div>
         {esMobil ? (
           <>
@@ -1198,7 +1202,7 @@ export default function App() {
 
         {/* Contenido por tab */}
         {tab === "dashboard" && (
-          <Graficos resumen={resumen} gastos={gastos} ingresos={ingresos} dispensador={dispensador} prediccion={prediccion} compromisos={compromisos} onAbrirCompromisos={() => setTab("compromisos")}/>
+          <Graficos resumen={resumen} gastos={gastos} ingresos={ingresos} dispensador={dispensador} prediccion={prediccion} compromisos={compromisos} onAbrirCompromisos={() => setTab("compromisos")} onAbrirPerfiles={() => setModalPerfiles(true)}/>
         )}
 
         {tab === "gastos" && (
