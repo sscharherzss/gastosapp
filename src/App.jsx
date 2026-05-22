@@ -497,7 +497,7 @@ function ListaGastos({ gastos, onEliminar }) {
   );
 }
 
-function ListaIngresos({ ingresos }) {
+function ListaIngresos({ ingresos, onEliminar }) {
   if (!ingresos.length) return <p className="empty">No hay ingresos este mes</p>;
   return (
     <div className="lista">
@@ -508,7 +508,10 @@ function ListaIngresos({ ingresos }) {
             <span className="lista-item-desc">{i.descripcion}</span>
             <span className="lista-item-fecha">{i.fecha}</span>
           </div>
-          <span className="lista-item-monto" style={{color:"#10b981"}}>{fmt(i.monto)}</span>
+          <div className="lista-item-right">
+            <span className="lista-item-monto" style={{color:"#10b981"}}>{fmt(i.monto)}</span>
+            <button className="btn-icon" onClick={() => onEliminar(i.id)}><Trash2 size={14}/></button>
+          </div>
         </div>
       ))}
     </div>
@@ -529,7 +532,7 @@ function useAncho() {
   return ancho;
 }
 
-function Graficos({ resumen, gastos, ingresos, dispensador, prediccion, compromisos }) {
+function Graficos({ resumen, gastos, ingresos, dispensador, prediccion, compromisos, onAbrirCompromisos }) {
   const fmtLocal = n => new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",minimumFractionDigits:0}).format(n||0);
   const ancho = useAncho();
   // El sidebar colapsado mide 64px; en móvil vertical la pantalla útil es ~360-420px
@@ -674,9 +677,9 @@ function Graficos({ resumen, gastos, ingresos, dispensador, prediccion, compromi
         )}
       </div>
 
-      {/* 3. Predicción ML */}
+      {/* 3. Predicción Machine Learning */}
       <div style={card}>
-        <div style={titulo}>🧠 Predicción ML del mes</div>
+        <div style={titulo}>🧠 Predicción Machine Learning del mes</div>
         <ResponsiveContainer width="100%" height={hBar}>
           <BarChart data={dataML} barSize={esMobil ? 28 : 35} margin={{left:-10,right:4}}>
             <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10"/>
@@ -699,7 +702,12 @@ function Graficos({ resumen, gastos, ingresos, dispensador, prediccion, compromi
 
       {/* 4. Compromisos vs Disponible */}
       <div style={card}>
-        <div style={titulo}>📋 Compromisos vs Disponible</div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+          <div style={titulo}>📋 Compromisos vs Disponible</div>
+          <button onClick={onAbrirCompromisos} style={{padding:"0.45rem 0.8rem",borderRadius:10,border:"1px solid #334155",background:"#0f172a",color:"#94a3b8",fontSize:12,cursor:"pointer"}}>
+            + Agregar compromiso
+          </button>
+        </div>
         {esMobil ? (
           <>
             <ResponsiveContainer width="100%" height={hPie}>
@@ -888,14 +896,18 @@ function DispensadorDia({ data, onRefresh }) {
 function PrediccionML({ data }) {
   if (!data) return <div style={{color:"#64748b",padding:"2rem",textAlign:"center"}}>Cargando predicción...</div>;
   const fmtLocal = n => new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",minimumFractionDigits:0}).format(n);
-  const excede = data.diferencia_vs_presupuesto > 0;
+  const excede = data.diferencia_vs_presupuesto < 0;
   const colorDiff = excede ? "#ef4444" : "#22c55e";
+  const confidenceColor = excede ? "#ef4444" : "#22c55e";
   return (
     <div style={{background:"#1e2a3a",borderRadius:16,padding:"1.5rem",marginBottom:"1.5rem",border:"1px solid #1e293b"}}>
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:"1.25rem"}}>
         <span style={{fontSize:18}}>🧠</span>
-        <h3 style={{margin:0,fontSize:16,fontWeight:600,color:"#94a3b8"}}>Predicción ML del mes</h3>
-        <span style={{marginLeft:"auto",fontSize:11,color:"#64748b"}}>Confianza: {Math.round(data.confianza)}%</span>
+        <h3 style={{margin:0,fontSize:16,fontWeight:600,color:"#94a3b8"}}>Predicción Machine Learning del mes</h3>
+        <div style={{marginLeft:"auto",textAlign:"right"}}>
+          <div style={{fontSize:12,color:"#64748b",marginBottom:2}}>Confianza</div>
+          <div style={{fontSize:18,fontWeight:700,color:confidenceColor}}>{Math.round(data.confianza)}%</div>
+        </div>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:"1.25rem"}}>
         <div style={{background:"#0f172a",borderRadius:12,padding:"1rem",textAlign:"center"}}>
@@ -1001,22 +1013,43 @@ export default function App() {
 
 
   const cargarDatosNuevos = useCallback(async () => {
-    try {
-      const { anio, mes } = hoy();
-      const [disp, pred, comps, pres, msg] = await Promise.all([
-        invoke("obtener_dispensador_dia", { anio, mes }),
-        invoke("obtener_prediccion_ml", { anio, mes }),
-        invoke("listar_compromisos"),
-        invoke("obtener_presupuesto", { anio, mes }),
-        invoke("obtener_mensaje_manana", { anio, mes }),
-      ]);
-      setDispensador(disp);
-      setPrediccion(pred);
-      setCompromisos(comps);
-      setPresupuesto(pres);
-      setMensajeManana(msg);
-    } catch (e) {
-      console.error("Error datos nuevos:", e);
+    const { anio, mes } = hoy();
+    const [dispResult, predResult, compsResult, presResult, msgResult] = await Promise.allSettled([
+      invoke("obtener_dispensador_dia", { anio, mes }),
+      invoke("obtener_prediccion_ml", { anio, mes }),
+      invoke("listar_compromisos"),
+      invoke("obtener_presupuesto", { anio, mes }),
+      invoke("obtener_mensaje_manana", { anio, mes }),
+    ]);
+
+    if (dispResult.status === "fulfilled") setDispensador(dispResult.value);
+    else {
+      console.error("Error cargando dispensador:", dispResult.reason);
+      setDispensador(null);
+    }
+
+    if (predResult.status === "fulfilled") setPrediccion(predResult.value);
+    else {
+      console.error("Error cargando predicción ML:", predResult.reason);
+      setPrediccion(null);
+    }
+
+    if (compsResult.status === "fulfilled") setCompromisos(compsResult.value);
+    else {
+      console.error("Error cargando compromisos:", compsResult.reason);
+      setCompromisos([]);
+    }
+
+    if (presResult.status === "fulfilled") setPresupuesto(presResult.value?.monto || 0);
+    else {
+      console.error("Error cargando presupuesto:", presResult.reason);
+      setPresupuesto(0);
+    }
+
+    if (msgResult.status === "fulfilled") setMensajeManana(msgResult.value);
+    else {
+      console.error("Error cargando mensaje de mañana:", msgResult.reason);
+      setMensajeManana(null);
     }
   }, [perfilActivo]);
 
@@ -1046,6 +1079,12 @@ export default function App() {
 
   async function eliminarGasto(id) {
     await invoke("eliminar_gasto", { id });
+    cargar();
+  }
+
+  async function eliminarIngreso(id) {
+    if (!window.confirm("¿Estás seguro de eliminar este ingreso?")) return;
+    await invoke("eliminar_ingreso", { id });
     cargar();
   }
 
@@ -1150,15 +1189,16 @@ export default function App() {
 
         {/* Stats */}
         <div className="stats-row">
-          <StatCard icon={TrendingUp}   label="Ingresos"  value={resumen.total_ingresos} color="#10b981"/>
-          <StatCard icon={TrendingDown} label="Gastos"    value={resumen.total_gastos}   color="#f43f5e"/>
-          <StatCard icon={PiggyBank}    label="Ahorrado"  value={resumen.total_ahorrado} color={resumen.total_ahorrado>=0?accentColor:"#f59e0b"}
+          <StatCard icon={TrendingUp}   label="Ingresos"    value={resumen.total_ingresos} color="#10b981"/>
+          <StatCard icon={TrendingDown} label="Gastos"      value={resumen.total_gastos}   color="#f43f5e"/>
+          <StatCard icon={DollarSign}   label="Presupuesto" value={presupuesto}         color="#f59e0b"/>
+          <StatCard icon={PiggyBank}    label="Ahorrado"    value={resumen.total_ahorrado} color={resumen.total_ahorrado>=0?accentColor:"#f59e0b"}
             sub={resumen.total_ahorrado < 0 ? "⚠ Gastos superan ingresos" : undefined}/>
         </div>
 
         {/* Contenido por tab */}
         {tab === "dashboard" && (
-          <Graficos resumen={resumen} gastos={gastos} ingresos={ingresos} dispensador={dispensador} prediccion={prediccion} compromisos={compromisos}/>
+          <Graficos resumen={resumen} gastos={gastos} ingresos={ingresos} dispensador={dispensador} prediccion={prediccion} compromisos={compromisos} onAbrirCompromisos={() => setTab("compromisos")}/>
         )}
 
         {tab === "gastos" && (
@@ -1182,7 +1222,7 @@ export default function App() {
           <div className="tab-content">
             <FormIngreso onGuardado={cargar}/>
             <h3 className="section-title">Ingresos de {MESES[mes-1]}</h3>
-            <ListaIngresos ingresos={ingresos}/>
+            <ListaIngresos ingresos={ingresos} onEliminar={eliminarIngreso}/>
           </div>
         )}
       </main>

@@ -4,7 +4,7 @@ use crate::models::{
     Compromiso, DispensadorDia, PrediccionML, CompromisoPendiente, 
     MensajeManana, GastoCategoria, Gasto, Ingreso, ResumenMes, Presupuesto
 };
-use chrono::{Local, NaiveDate, Duration};
+use chrono::{Local, NaiveDate, Duration, Datelike};
 
 // Importamos el contenedor dinámico del pool desde la raíz (lib.rs)
 use crate::DbState;
@@ -68,9 +68,18 @@ pub async fn inicializar_db(pool: &SqlitePool) -> Result<(), sqlx::Error> {
 
     Ok(())
 }
-
 // ── COMANDOS DE MUTACIÓN DE INTERFAZ ──────────────────────────────────────────
-
+#[tauri::command]
+pub async fn eliminar_ingreso(id: i64, state: State<'_, DbState>) -> Result<(), String> {
+    let pool = obtener_pool(&state).await?;
+    sqlx::query(
+        "DELETE FROM ingresos WHERE id = ?")
+        .bind(id)
+        .execute(&pool)
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
 #[tauri::command]
 pub async fn cambiar_perfil(nombre_perfil: String, handle: AppHandle, state: State<'_, DbState>) -> Result<(), String> {
     let app_dir = handle.path().app_data_dir()
@@ -290,9 +299,9 @@ pub async fn obtener_dispensador_dia(anio: i32, mes: i32, state: State<'_, DbSta
     let pool = obtener_pool(&state).await?;
     
     // Obtener presupuesto base asignado del mes
-    let r_pres: (Option<f64>,) = sqlx::query_as("SELECT monto FROM presupuesto WHERE anio = ? AND mes = ?")
-        .bind(anio).bind(mes).fetch_one(&pool).await.map_err(|e| e.to_string())?;
-    let presupuesto_mes = r_pres.0.unwrap_or(0.0);
+    let r_pres: Option<(Option<f64>,)> = sqlx::query_as("SELECT monto FROM presupuesto WHERE anio = ? AND mes = ?")
+        .bind(anio).bind(mes).fetch_optional(&pool).await.map_err(|e| e.to_string())?;
+    let presupuesto_mes = r_pres.and_then(|row| row.0).unwrap_or(0.0);
 
     // Obtener los gastos consolidados del mes en curso
     let prefijo_mes = format!("{:04}-{:02}%", anio, mes);
@@ -391,9 +400,9 @@ pub async fn obtener_prediccion_ml(anio: i32, mes: i32, state: State<'_, DbState
     let pool = obtener_pool(&state).await?;
     
     // 1. Obtener presupuesto asignado
-    let r_p: (Option<f64>,) = sqlx::query_as("SELECT monto FROM presupuesto WHERE anio = ? AND mes = ?")
-        .bind(anio).bind(mes).fetch_one(&pool).await.map_err(|e| e.to_string())?;
-    let presupuesto = r_p.0.unwrap_or(0.0);
+    let r_p: Option<(Option<f64>,)> = sqlx::query_as("SELECT monto FROM presupuesto WHERE anio = ? AND mes = ?")
+        .bind(anio).bind(mes).fetch_optional(&pool).await.map_err(|e| e.to_string())?;
+    let presupuesto = r_p.and_then(|row| row.0).unwrap_or(0.0);
 
     // 2. Analizar el comportamiento del mes en base a los registros actuales
     let prefijo = format!("{:04}-{:02}%", anio, mes);
@@ -401,28 +410,20 @@ pub async fn obtener_prediccion_ml(anio: i32, mes: i32, state: State<'_, DbState
         .bind(&prefijo).fetch_all(&pool).await.map_err(|e| e.to_string())?;
 
     let mut sumatoria = 0.0;
-    let mut recuento_dias = 0;
-    let mut ultimo_dia_visto = 0;
-
     for r in &filas_g {
         let m: f64 = r.get("monto");
-        let f: String = r.get("fecha");
         sumatoria += m;
-        if let Some(d_parse) = f.split('-').nth(2).and_then(|s| s.parse::<i32>().ok()) {
-            if d_parse > ultimo_dia_visto {
-                ultimo_dia_visto = d_parse;
-                recuento_dias += 1;
-            }
-        }
     }
 
-    let promedio_diario = if recuento_dias > 0 { sumatoria / recuento_dias as f64 } else { 0.0 };
-
-    // Calcular días faltantes para cerrar el ciclo
+    // Usamos los días transcurridos del mes para obtener una proyección diaria gradual.
     let hoy = Local::now().naive_local().date();
-    let fin_mes = if mes == 12 { NaiveDate::from_ymd_opt(anio + 1, 1, 1).unwrap() } 
+    let primer_dia = NaiveDate::from_ymd_opt(anio, mes as u32, 1).unwrap();
+    let fin_mes = if mes == 12 { NaiveDate::from_ymd_opt(anio + 1, 1, 1).unwrap() }
                   else { NaiveDate::from_ymd_opt(anio, (mes + 1) as u32, 1).unwrap() };
     let dias_restantes = (fin_mes - hoy).num_days();
+    let dias_mes = (fin_mes - primer_dia).num_days() as f64;
+    let dias_transcurridos = hoy.day() as i32;
+    let promedio_diario = if dias_transcurridos > 0 { sumatoria / dias_transcurridos as f64 } else { 0.0 };
 
     // Proyección lineal simple por comportamiento diario regular
     let mut proyeccion_mes = sumatoria + (promedio_diario * dias_restantes as f64);
@@ -432,6 +433,7 @@ pub async fn obtener_prediccion_ml(anio: i32, mes: i32, state: State<'_, DbState
         .fetch_all(&pool).await.map_err(|e| e.to_string())?;
 
     let mut compromisos_pendientes = Vec::new();
+    let mut total_compromisos = 0.0;
     for r in filas_c {
         let tipo: String = r.get("tipo");
         let nombre: String = r.get("nombre");
@@ -456,21 +458,27 @@ pub async fn obtener_prediccion_ml(anio: i32, mes: i32, state: State<'_, DbState
         };
 
         if let Some(fv) = vencimiento {
+            let delta = (fv - hoy).num_days() as i32;
             if fv >= hoy && fv < fin_mes {
-                let delta = (fv - hoy).num_days() as i32;
                 compromisos_pendientes.push(CompromisoPendiente {
                     nombre: nombre.clone(),
                     monto,
                     dias_para_vencer: delta,
                     tipo: tipo.clone(),
                 });
-                proyeccion_mes += monto;
+            }
+            if fv >= NaiveDate::from_ymd_opt(anio, mes as u32, 1).unwrap() && fv < fin_mes {
+                total_compromisos += monto;
             }
         }
     }
 
+    proyeccion_mes += total_compromisos;
+
     let diferencia_vs_presupuesto = presupuesto - proyeccion_mes;
-    let confianza = if recuento_dias > 5 { (80.0 + (recuento_dias as f64 * 0.6)).min(98.0) } else { 50.0 };
+    let confianza = if dias_transcurridos > 5 {
+        ((dias_transcurridos as f64 / dias_mes) * 80.0 + 20.0).min(98.0)
+    } else { 50.0 };
 
     // Reutilizar categorías actuales como desglose dummy ponderado
     let filas_cat = sqlx::query("SELECT categoria, SUM(monto) as total FROM gastos WHERE fecha LIKE ? GROUP BY categoria")
@@ -483,6 +491,12 @@ pub async fn obtener_prediccion_ml(anio: i32, mes: i32, state: State<'_, DbState
         desglose_proyectado.push(GastoCategoria {
             categoria: r.get("categoria"),
             total: t_act + (promedio_diario * dias_restantes as f64 * factor),
+        });
+    }
+    if total_compromisos > 0.0 {
+        desglose_proyectado.push(GastoCategoria {
+            categoria: "Compromisos".to_string(),
+            total: total_compromisos,
         });
     }
 

@@ -45,6 +45,7 @@ pub fn run() {
             commands::gastos::listar_gastos,
             commands::gastos::eliminar_gasto,
             commands::gastos::agregar_ingreso,
+            commands::gastos::eliminar_ingreso,
             commands::gastos::listar_ingresos,
             commands::gastos::obtener_resumen_mes,
             commands::gastos::guardar_presupuesto,
