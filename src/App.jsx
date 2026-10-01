@@ -446,16 +446,20 @@ function FormGasto({ onGuardado }) {
   const [cat, setCat] = useState(CATEGORIAS[0]);
   const [cargando, setCargando] = useState(false);
   const [ok, setOk] = useState(false);
+  const [error, setError] = useState("");
 
   async function guardar() {
-    if (!desc.trim() || !monto || !Number.isFinite(Number(monto)) || Number(monto) <= 0) return;
+    if (!desc.trim() || !monto || !Number.isFinite(Number(monto)) || Number(monto) <= 0) {
+      setError("Escribe una descripción y un monto mayor que cero.");
+      return;
+    }
     setCargando(true);
     try {
       await invoke("agregar_gasto", { descripcion: desc, monto: parseFloat(monto), categoria: cat });
-      setDesc(""); setMonto(""); setOk(true);
+      setDesc(""); setMonto(""); setError(""); setOk(true);
       setTimeout(() => setOk(false), 1500);
       onGuardado();
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error(e); setError("No se pudo guardar el gasto. Inténtalo de nuevo."); }
     setCargando(false);
   }
 
@@ -472,6 +476,7 @@ function FormGasto({ onGuardado }) {
           {ok ? "✓ Guardado" : cargando ? "Guardando…" : "Agregar gasto"}
         </button>
       </div>
+      {error && <p role="alert" className="form-error">{error}</p>}
     </div>
   );
 }
@@ -482,16 +487,20 @@ function FormIngreso({ onGuardado }) {
   const [monto, setMonto] = useState("");
   const [cargando, setCargando] = useState(false);
   const [ok, setOk] = useState(false);
+  const [error, setError] = useState("");
 
   async function guardar() {
-    if (!desc.trim() || !monto || !Number.isFinite(Number(monto)) || Number(monto) <= 0) return;
+    if (!desc.trim() || !monto || !Number.isFinite(Number(monto)) || Number(monto) <= 0) {
+      setError("Escribe una descripción y un monto mayor que cero.");
+      return;
+    }
     setCargando(true);
     try {
       await invoke("agregar_ingreso", { descripcion: desc, monto: parseFloat(monto) });
-      setDesc(""); setMonto(""); setOk(true);
+      setDesc(""); setMonto(""); setError(""); setOk(true);
       setTimeout(() => setOk(false), 1500);
       onGuardado();
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error(e); setError("No se pudo guardar el ingreso. Inténtalo de nuevo."); }
     setCargando(false);
   }
 
@@ -505,6 +514,7 @@ function FormIngreso({ onGuardado }) {
           {ok ? "✓ Guardado" : cargando ? "Guardando…" : "Agregar ingreso"}
         </button>
       </div>
+      {error && <p role="alert" className="form-error">{error}</p>}
     </div>
   );
 }

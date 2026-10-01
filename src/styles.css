@@ -71,6 +71,7 @@ body {
   display: flex; align-items: center;
 }
 .btn-mes:hover { color: var(--text); background: var(--bg3); }
+.form-error { margin-top:.65rem; color:var(--red); font-size:.85rem; font-weight:600; }
 .btn-exportar {
   margin-left: .35rem;
   display: inline-flex;
