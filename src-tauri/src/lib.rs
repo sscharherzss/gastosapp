@@ -1,8 +1,9 @@
-mod models;
 mod commands;
+mod forecast;
+mod models;
 
-use sqlx::sqlite::SqlitePoolOptions;
 use commands::gastos::inicializar_db;
+use sqlx::sqlite::SqlitePoolOptions;
 use tauri::Manager;
 use tokio::sync::RwLock;
 
@@ -15,12 +16,13 @@ pub struct DbState {
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
-            let app_dir = app.path().app_data_dir()
+            let app_dir = app
+                .path()
+                .app_data_dir()
                 .expect("no se pudo obtener el directorio de datos");
             std::fs::create_dir_all(&app_dir).ok();
-            
-            let db_url = format!("sqlite://{}?mode=rwc",
-                app_dir.join("gastos.db").display());
+
+            let db_url = format!("sqlite://{}?mode=rwc", app_dir.join("gastos.db").display());
 
             tauri::async_runtime::block_on(async {
                 let pool = SqlitePoolOptions::new()
@@ -28,10 +30,9 @@ pub fn run() {
                     .connect(&db_url)
                     .await
                     .expect("error conectando a SQLite");
-                
-                inicializar_db(&pool).await
-                    .expect("error creando tablas");
-                
+
+                inicializar_db(&pool).await.expect("error creando tablas");
+
                 // Inicializamos con gastos.db por defecto
                 app.manage(DbState {
                     pool: RwLock::new(Some(pool)),
@@ -40,8 +41,13 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            commands::gastos::listar_ahorros,
+            commands::gastos::agregar_ahorro,
+            commands::gastos::eliminar_ahorro,
             commands::gastos::cambiar_perfil, // Expuesto hacia el frontend de React
             commands::gastos::agregar_gasto,
+            commands::gastos::actualizar_gasto,
+            commands::gastos::actualizar_ingreso,
             commands::gastos::listar_gastos,
             commands::gastos::eliminar_gasto,
             commands::gastos::agregar_ingreso,
@@ -54,6 +60,7 @@ pub fn run() {
             commands::gastos::obtener_prediccion_ml,
             commands::gastos::agregar_compromiso,
             commands::gastos::listar_compromisos,
+            commands::gastos::actualizar_compromiso,
             commands::gastos::eliminar_compromiso,
             commands::gastos::obtener_mensaje_manana,
             commands::gastos::guardar_config,

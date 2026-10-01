@@ -1,0 +1,4 @@
+# Solo para desarrollo. Cloudflare Access protege producción.
+ENVIRONMENT=development
+ALLOWED_ORIGIN=http://localhost:1420
+DEV_AUTH_USER_ID=persona@example.com

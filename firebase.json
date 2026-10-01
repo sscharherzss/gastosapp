@@ -1,0 +1,11 @@
+{
+  "firestore": { "rules": "firestore.rules" },
+  "hosting": {
+    "public": "firebase-dist",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      { "source": "/gastos", "destination": "/gastos/index.html" },
+      { "source": "/gastos/**", "destination": "/gastos/index.html" }
+    ]
+  }
+}

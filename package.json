@@ -1,21 +1,21 @@
 {
   "name": "gastos-app",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "tauri": "tauri"
+    "build:firebase": "VITE_BASE_PATH=/gastos/ VITE_OUT_DIR=firebase-dist/gastos vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.11.0",
+    "firebase": "^12.19.0",
     "lucide-react": "^1.14.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "recharts": "^3.8.1"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.11.1",
     "@vitejs/plugin-react": "^4.0.0",
     "vite": "^5.0.0"
   }

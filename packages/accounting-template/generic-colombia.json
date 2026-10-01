@@ -1,0 +1,17 @@
+{
+  "id": "mis-finanzas-colombia-v1",
+  "name": "Plantilla personal genérica Colombia",
+  "currency": "COP",
+  "delimiter": ";",
+  "encoding": "utf-8-bom",
+  "columns": ["fecha", "tipo", "descripcion", "categoria", "monto", "perfil"],
+  "category_accounts": {
+    "Alimentación": "5135",
+    "Transporte": "5135",
+    "Vivienda": "5120",
+    "Salud": "5135",
+    "Educación": "5135",
+    "Otros": "5195"
+  },
+  "notes": ["Los códigos PUC son referencias genéricas.", "Confirma el plan de cuentas con un contador antes de una declaración o importación contable."]
+}

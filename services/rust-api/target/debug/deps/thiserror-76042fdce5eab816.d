@@ -1,0 +1,14 @@
+/home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/deps/thiserror-76042fdce5eab816.d: /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/lib.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/aserror.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/display.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/var.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/private.rs /home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/build/thiserror-5625190151795b8c/out/private.rs
+
+/home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/deps/libthiserror-76042fdce5eab816.rlib: /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/lib.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/aserror.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/display.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/var.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/private.rs /home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/build/thiserror-5625190151795b8c/out/private.rs
+
+/home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/deps/libthiserror-76042fdce5eab816.rmeta: /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/lib.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/aserror.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/display.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/var.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/private.rs /home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/build/thiserror-5625190151795b8c/out/private.rs
+
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/lib.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/aserror.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/display.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/var.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/private.rs:
+/home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/build/thiserror-5625190151795b8c/out/private.rs:
+
+# env-dep:OUT_DIR=/home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/build/thiserror-5625190151795b8c/out

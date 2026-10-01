@@ -1,0 +1,10 @@
+/home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/deps/pem_rfc7468-8dacd864fa731454.d: /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/lib.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/decoder.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/encoder.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/error.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/grammar.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/../README.md
+
+/home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/deps/libpem_rfc7468-8dacd864fa731454.rmeta: /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/lib.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/decoder.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/encoder.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/error.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/grammar.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/../README.md
+
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/lib.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/decoder.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/encoder.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/error.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/grammar.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pem-rfc7468-0.7.0/src/../README.md:

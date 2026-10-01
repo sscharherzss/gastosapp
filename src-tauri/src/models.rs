@@ -1,13 +1,4 @@
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
-use tokio::sync::RwLock;
-use sqlx::SqlitePool;
-
-// Contenedor mutable para el pool de conexiones de cada perfil
-pub struct DbState {
-    pub pool: Arc<RwLock<Option<SqlitePool>>>,
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Gasto {
     pub id: i64,
@@ -70,6 +61,7 @@ pub struct DispensadorDia {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PrediccionML {
+    pub presupuesto_definido: bool,
     pub proyeccion_mes: f64,
     pub diferencia_vs_presupuesto: f64,
     pub confianza: f64,
@@ -93,4 +85,15 @@ pub struct MensajeManana {
     pub gastado_ayer: f64,
     pub compromisos_esta_semana: Vec<CompromisoPendiente>,
     pub mensaje: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Ahorro {
+    pub id: i64,
+    pub nombre: String,
+    pub monto: f64,
+    pub tipo: String,
+    pub rendimiento: f64,
+    pub fecha_registro: String,
+    pub descripcion: Option<String>,
 }

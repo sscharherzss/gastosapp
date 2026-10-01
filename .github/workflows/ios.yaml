@@ -1,0 +1,56 @@
+name: iPhone y iPad
+on:
+  workflow_dispatch:
+    inputs:
+      signed:
+        description: 'Generar IPA firmado para App Store Connect (requiere secretos Apple)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: macos-latest
+    env:
+      # Tauri requiere un valor incluso para el simulador. Para una IPA firmada
+      # la comprobación posterior exige el Team ID real guardado como secreto.
+      APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM || 'XXXXXXXXXX' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,aarch64-apple-ios-sim,x86_64-apple-ios
+      - run: brew install xcodegen
+      - run: npm ci
+      - name: Inicializar proyecto Xcode
+        run: npm run tauri ios init -- --ci
+      - name: Compilar para simulador
+        if: ${{ !inputs.signed }}
+        run: npm run tauri ios build -- --target aarch64-sim --ci
+      - name: Comprobar credenciales Apple
+        if: ${{ inputs.signed }}
+        env:
+          IOS_CERTIFICATE: ${{ secrets.IOS_CERTIFICATE }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+          IOS_MOBILE_PROVISION: ${{ secrets.IOS_MOBILE_PROVISION }}
+        run: |
+          test "$APPLE_DEVELOPMENT_TEAM" != 'XXXXXXXXXX'
+          test -n "$IOS_CERTIFICATE" && test -n "$IOS_CERTIFICATE_PASSWORD" && test -n "$IOS_MOBILE_PROVISION"
+      - name: Crear IPA firmado
+        if: ${{ inputs.signed }}
+        env:
+          IOS_CERTIFICATE: ${{ secrets.IOS_CERTIFICATE }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+          IOS_MOBILE_PROVISION: ${{ secrets.IOS_MOBILE_PROVISION }}
+        run: npm run tauri ios build -- --target aarch64 --export-method app-store-connect --build-number '${{ github.run_number }}' --ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gastos-ios
+          if-no-files-found: error
+          path: |
+            src-tauri/gen/apple/build/**/*.ipa
+            src-tauri/gen/apple/build/**/*.app

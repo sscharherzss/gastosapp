@@ -1,0 +1,11 @@
+/home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/deps/tinyvec-a21f2f47cb36e3f5.d: /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/lib.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/array.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/array/const_generic_impl.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/arrayvec.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/arrayvec_drain.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/slicevec.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/tinyvec.rs
+
+/home/charherz/proyecto_gastos/gastos-app/services/rust-api/target/debug/deps/libtinyvec-a21f2f47cb36e3f5.rmeta: /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/lib.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/array.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/array/const_generic_impl.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/arrayvec.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/arrayvec_drain.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/slicevec.rs /home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/tinyvec.rs
+
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/lib.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/array.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/array/const_generic_impl.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/arrayvec.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/arrayvec_drain.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/slicevec.rs:
+/home/charherz/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.13.3/src/tinyvec.rs:

@@ -1,0 +1,14 @@
+{
+  "name": "@mis-finanzas/api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "check": "node --check src/index.js",
+    "db:migrate:local": "wrangler d1 migrations apply mis-finanzas-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply mis-finanzas-db --remote",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": { "wrangler": "^4.15.0" }
+}
