@@ -10,7 +10,7 @@
 
 ## Dominio
 
-En Firebase Hosting, conecta `www.lamayoristapp.com` como dominio personalizado. Firebase mostrará los registros DNS que debes añadir en el proveedor del dominio. Cuando la verificación termine, la aplicación estará en `https://www.lamayoristapp.com/gastos`.
+`www.lamayoristapp.com` ya pertenece al sitio de inventario `motora-produccion-74b58`; no debe moverse a este proyecto. En Firebase Hosting conecta `gastos.lamayoristapp.com` como dominio personalizado. Firebase mostrará los registros DNS que debes añadir en el proveedor del dominio. Cuando la verificación termine, la aplicación estará en `https://gastos.lamayoristapp.com/` y también responderá en `/gastos`.
 
 ## Datos
 

@@ -4,8 +4,10 @@
     "public": "firebase-dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
+      { "source": "/", "destination": "/gastos/index.html" },
       { "source": "/gastos", "destination": "/gastos/index.html" },
-      { "source": "/gastos/**", "destination": "/gastos/index.html" }
+      { "source": "/gastos/**", "destination": "/gastos/index.html" },
+      { "source": "**", "destination": "/gastos/index.html" }
     ]
   }
 }
